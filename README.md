@@ -1,1 +1,2 @@
 # smart-parnik
+https://zona-3d.ru/catalog/mekhanika/shkivy_dlya_remney/shkivy_dlya_remney_s_podshipnikami/rolik_bezzubyy_20_zub_gates_d3_pod_remen_6_mm
