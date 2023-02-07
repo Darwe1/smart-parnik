@@ -6,6 +6,11 @@
 
 IRrecv ir(10);
 GStepper<STEPPER2WIRE> stepper(2048, 12, 11, 13);
+#define B1  //каретка положение 1 -
+#define B1_2 // каретка положение 2 +
+#define B2  //вентелятор
+#define B3  //помпа
+#define B4  // лампа
 #define careta 10
 #define vent 9
 #define pompa 8
@@ -15,6 +20,7 @@ GStepper<STEPPER2WIRE> stepper(2048, 12, 11, 13);
 #define vlaznost A2
 #define on_off 0
 long seed;
+int n = 0;
 bool mi = 0; //работает ли устройство в ручном режиме
 decode_results res;
 
@@ -34,7 +40,7 @@ void setup()
   pinMode(5,OUTPUT);
 }
 
-void lamp(){
+void lamp(int fotores, int lampa){
   if(analogRead(fotores) < 900){
     digitalWrite(lampa, HIGH);
   }
@@ -44,7 +50,7 @@ void lamp(){
   }
 }
 
-void pomp(){
+void pomp(int vlaznost, int pompa){
     if (analogRead(vlaznost) < 750) {
     digitalWrite(pompa, HIGH);
   }
@@ -58,7 +64,7 @@ void pomp(){
 
 
 
-void caret(){
+void caret(int temper, int vent){
   if (analogRead(temper) < 200) {
     stepper.setTarget(0);
     digitalWrite(vent, LOW);
@@ -76,7 +82,7 @@ void caret(){
 ///caret_and_pomp(analogRead(temper), )
 ///void caret_and_pomp(int temp_val,int vlaznost_val)
 
-void caret_pomp(){
+void caret_pomp(int temper, int vent, int pompa, int vlaznost){
   if(analogRead(temper) > 200 && analogRead(vlaznost) < 750){
     stepper.setTarget(150);
     digitalWrite(vent, HIGH);
@@ -104,8 +110,56 @@ void caret_pomp(){
   }
 }
 
-void hc(long seed){
-
+void hc(long seed, int n){
+    if(seed == B2){
+      if(digitalRead(9) == 0){
+        digitalWrite(9, HIGH);
+      }
+      else
+      {
+        digitalWrite(9, LOW)
+      }
+    }
+    if(seed == B3){
+       if(digitalRead(8) == 0){
+        digitalWrite(8, HIGH);
+      }
+      else
+      {
+        digitalWrite(8, LOW);
+      }
+    }
+    if(seed == B4){
+      if(digitalRead(7) == 0){
+        digitalWrite(7, HIGH);
+      }
+      else
+      {
+        digitalWrite(7, LOW);
+      }
+    }
+    if(seed == B1){
+      if(n != 2){
+        n += 1;
+      }
+      if(n == 1){
+        stepper.setTarget(150);
+      }
+      if(n == 2){
+        stepper.setTarget(300);
+      }
+    }
+    if(seed == B1_2){
+      if(n != 0){
+        n -= 1;
+      }
+      if(n == 0){
+        stepper.setTarget(0);
+      }
+      if(n == 1){
+        stepper.setTarget(150);
+      }
+    }
 }
 
 void loop()
@@ -130,4 +184,4 @@ void loop()
   caret();
   caret_pomp();
   }
-}
+}   
