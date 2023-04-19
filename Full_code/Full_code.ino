@@ -5,7 +5,7 @@
 
 LiquidCrystal lcd(40,38,36,34,32,30,28,26,24,22);
 IRrecv ir(8);
-GStepper<STEPPER2WIRE> stepper(2048, 12, 11, 13);
+GStepper<STEPPER2WIRE> stepper(2048, 10, 9, 11);
 #define B1  0xFFE01F//каретка положение 1 -
 #define B1_2 0xFFA857// каретка положение 2 +
 #define B2  0xFF30CF//вентелятор на пульте 1
@@ -39,39 +39,52 @@ void setup()
   stepper.setSpeed(100);
   ir.enableIRIn();
   pinMode(5,OUTPUT);
-  lcd.begin(16, 1); // выставляем скорость COM порта
+  lcd.begin(16, 2); // выставляем скорость COM порта
   ///irrecv.enableIRIn(); // запускаем прием
   ///lcd.autoscroll();
 }
 
 void lampa(){
+  lcd.clear();
   if(analogRead(fotores) < 900){
     ///Serial.println("lampa 1");
     digitalWrite(lampa, HIGH);
+    lcd.print("Lampa 1");
+    lcd.home();
   }
   else
   {
     ///Serial.println("lampa 0");
     digitalWrite(lampa, LOW);
+    lcd.print("lampa 0");
+    lcd.home();
   }
 }
 
 void pompa(){
+  lcd.clear();
     if (analogRead(vlaznost) < 750) {
     ///Serial.println("pompa 1");
     digitalWrite(pompa, HIGH);
+    lcd.print("Pomp 1");
+    lcd.home();
   }
   if (analogRead(vlaznost) > 750) {
     ///Serial.println("pompa 0");
     digitalWrite(pompa, LOW);
+    lcd.print("Pomp 0");
+    lcd.home();
   }
 }
 
 void caret(){
+  lcd.clear();
   if (analogRead(temper) < 200) {
     ///Serial.println("caret 0, vent 0");
     stepper.setTarget(0);
     digitalWrite(vent, LOW);
+    lcd.print("Caret 0");
+    lcd.home();
   }
   if (analogRead(temper) > 200 && analogRead(temper) < 500) {
     ///Serial.println("caret 1/2, vent 1");
@@ -88,24 +101,34 @@ void caret(){
 ///caret_and_pomp(analogRead(temper), )
 ///void caret_and_pomp(int temp_val,int vlaznost_val)
 
-void caret_pomp(){
+/*void caret_pomp(){
+  lcd.clear();
   if(analogRead(temper) > 200 && analogRead(vlaznost) < 750){
     stepper.setTarget(150);
     ///Serial.print("caret 1/2 , vent 1 , pompa 1");
     digitalWrite(vent, HIGH);
     digitalWrite(pompa, HIGH);
+    lcd.print("Pos  Vent  Pomp");
+    lcd.setCursor(1,2);
+    lcd.print(" 1     1      1");
   }
   else if (analogRead(temper) < 200 && analogRead(vlaznost) > 750){
     stepper.setTarget(0);
     ///Serial.print("caret 0 , vent 0 , pompa 0");
     digitalWrite(vent, LOW);
     digitalWrite(pompa, LOW);
+    lcd.print("Pos  Vent  Pomp");
+    lcd.setCursor(1,2);
+    lcd.print(" 0     0      0");
   }
   else if (analogRead(temper) > 200 && analogRead(vlaznost) > 750){
     stepper.setTarget(150);
     ///Serial.print("caret 1/2 , vent 1 , pompa 0");
     digitalWrite(vent,HIGH);
     digitalWrite(pompa, LOW);
+    lcd.print("Pos  Vent  Pomp");
+    lcd.setCursor(1,2);
+    lcd.print(" 1     1      0");
   }
   else if (analogRead(temper) > 500 && analogRead(vlaznost) > 750){
     stepper.setTarget(300);
@@ -119,16 +142,26 @@ void caret_pomp(){
     digitalWrite(vent, HIGH);
     digitalWrite(pompa, HIGH);
   }
-}
+}*/
 
-void hc(long seed, int n = 0){
+void hc(long seed){
+  ///if (seed == B1_2 || seed == B1) {
+    ////stepper.enable();
+  ///}
+  if(!stepper.tick()){
     if(seed == B2){
       if(digitalRead(9) == 0){
         digitalWrite(9, HIGH);
+        lcd.clear();
+        lcd.print("Vent robit");
+        lcd.home();
       }
       else
       {
         digitalWrite(9, LOW);
+        lcd.clear();
+        lcd.print("Vent ne robit");
+        lcd.home();
       }
     }
     if(seed == B3){
@@ -149,35 +182,70 @@ void hc(long seed, int n = 0){
         digitalWrite(7, LOW);
       }
     }
-    if(seed == B1){
-      if(n != 2){
+    if(seed == B1_2){
+      if(n < 3){
         n += 1;
+        //Serial.println("add");
       }
       if(n == 1){
-        stepper.setTarget(150);
+        stepper.enable();
+        stepper.setTarget(150, RELATIVE);
+        ///delay(10000);
+        //stepper.disable();
+        lcd.clear();
         lcd.print("Position:");
         lcd.leftToRight();
         lcd.print(n);
+        lcd.home();
+        //Serial.println(1);
       }
       if(n == 2){
-        stepper.setTarget(300);
+        stepper.enable();
+        stepper.setTarget(150, RELATIVE);
+        ///stepper.disable();
+        lcd.clear();
+        lcd.print("Position:");
+        lcd.leftToRight();
+        lcd.print(n);
+        lcd.home();
+        //Serial.println(2);
       }
     }
-    if(seed == B1_2){
-      if(n != 0){
+    if(seed == B1){
+      if(n > 0){
         n -= 1;
       }
       if(n == 0){
-        stepper.setTarget(0);
+        stepper.enable();
+        stepper.setTarget(-150, RELATIVE);
+        ////stepper.disable();
+        lcd.clear();
+        lcd.print("Position:");
+        lcd.leftToRight();
+        lcd.print(n);
+        lcd.home();
       }
       if(n == 1){
-        stepper.setTarget(150);
+        stepper.enable();
+        stepper.setTarget(-150, RELATIVE);
+        ///delay(10000);
+       // stepper.disable();
+        lcd.clear();
+        lcd.print("Position:");
+        lcd.leftToRight();
+        lcd.print(n);
+        lcd.home();
       }
     }
+  } else {
+    ///stepper.disable();
+  }
 }
 
 void loop()
 {
+  ///Serial.println("CUR :" + stepper.getCurrent());
+  ///Serial.println("TG :" + stepper.getTarget());
   if (ir.decode(& res)) {
     Serial.println(res.value);
     seed = res.value;
@@ -193,7 +261,8 @@ void loop()
   }
   if(mi){
     hc(seed);
-    Serial.println("hc");
+    seed = 0;
+    //Serial.println("hc");
   }
   else
   {
@@ -201,6 +270,6 @@ void loop()
     lampa();
     pompa();
     caret();
-    caret_pomp();
+    ///caret_pomp();
   }
 }   
