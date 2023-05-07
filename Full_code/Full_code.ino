@@ -23,6 +23,7 @@ long seed;
 int n = 0;
 bool mi = 0; //работает ли устройство в ручном режиме
 decode_results res;
+///добавить флаг питания двигателя!
 
 void setup()
 {
@@ -68,6 +69,7 @@ void pompa(){
     digitalWrite(pompa, HIGH);
     lcd.print("Pomp 1");
     lcd.home();
+    ///сделать так чтобы помпа качала определенное время  
   }
   if (analogRead(vlaznost) > 750) {
     ///Serial.println("pompa 0");
@@ -79,6 +81,7 @@ void pompa(){
 
 void caret(){
   lcd.clear();
+  ///copy from hc
   if (analogRead(temper) < 200) {
     ///Serial.println("caret 0, vent 0");
     stepper.setTarget(0);
@@ -255,7 +258,7 @@ void loop()
   }
   if(seed == on_off) //on_off значение типа long с пульта на включение/выключение
   {
-    digitalWrite(5, !(digitalRead(5)));
+    digitalWrite(5, !(digitalRead(5)));///show lamp of hand control
     mi = !mi;
     seed = 0;
   }
