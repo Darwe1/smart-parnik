@@ -151,7 +151,6 @@ void hc(long seed){
   ///if (seed == B1_2 || seed == B1) {
     ////stepper.enable();
   ///}
-  if(!stepper.tick()){
     if(seed == B2){
       if(digitalRead(9) == 0){
         digitalWrite(9, HIGH);
@@ -185,13 +184,14 @@ void hc(long seed){
         digitalWrite(7, LOW);
       }
     }
-    if(seed == B1_2){
-      if(n < 3){
+    if(!stepper.tick()){
+     if(seed == B1_2){
+        if(n < 3){
         n += 1;
         //Serial.println("add");
       }
-      if(n == 1){
-        stepper.enable();
+       if(n == 1){
+        //stepper.enable();
         stepper.setTarget(150, RELATIVE);
         ///delay(10000);
         //stepper.disable();
@@ -202,8 +202,8 @@ void hc(long seed){
         lcd.home();
         //Serial.println(1);
       }
-      if(n == 2){
-        stepper.enable();
+        if(n == 2){
+       // stepper.enable();
         stepper.setTarget(150, RELATIVE);
         ///stepper.disable();
         lcd.clear();
@@ -217,32 +217,31 @@ void hc(long seed){
     if(seed == B1){
       if(n > 0){
         n -= 1;
-      }
-      if(n == 0){
-        stepper.enable();
-        stepper.setTarget(-150, RELATIVE);
-        ////stepper.disable();
-        lcd.clear();
-        lcd.print("Position:");
-        lcd.leftToRight();
-        lcd.print(n);
-        lcd.home();
-      }
-      if(n == 1){
-        stepper.enable();
-        stepper.setTarget(-150, RELATIVE);
-        ///delay(10000);
-       // stepper.disable();
-        lcd.clear();
-        lcd.print("Position:");
-        lcd.leftToRight();
-        lcd.print(n);
-        lcd.home();
+      
+        if(n == 0){
+        // stepper.enable();
+          stepper.setTarget(-150, RELATIVE);
+          ////stepper.disable();
+          lcd.clear();
+          lcd.print("Position:");
+          lcd.leftToRight();
+          lcd.print(n);
+          lcd.home();
+        }
+        if(n == 1){
+        // stepper.enable();
+          stepper.setTarget(-150, RELATIVE);
+          ///delay(10000);
+        // stepper.disable();
+          lcd.clear();
+          lcd.print("Position:");
+          lcd.leftToRight();
+          lcd.print(n);
+          lcd.home();
+        }
       }
     }
-  } else {
-    ///stepper.disable();
-  }
+  }  
 }
 
 void loop()
