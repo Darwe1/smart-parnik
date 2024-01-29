@@ -8,7 +8,7 @@ IRrecv ir(8);
 GStepper<STEPPER2WIRE> stepper(2048, 10, 9, 11);
 #define B1  0xFFE01F//каретка положение 1 -
 #define B1_2 0xFFA857// каретка положение 2 +
-#define B2  0xFF30CF//вентелятор на пульте 1
+#define B2  0xFF30CF//вентилятор на пульте 1
 #define B3  0xFF18E7//помпа на пульте 2
 #define B4  0xFF7A85// лампа на пульте 3
 #define careta 10
